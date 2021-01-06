@@ -14,17 +14,19 @@ namespace TechJobsPersistent.Controllers
     public class EmployerController : Controller
     {
         private JobDbContext context;
-        
         public EmployerController(JobDbContext dbContext)
         {
             context = dbContext;
         }
+
         // GET: /<controller>/
         public IActionResult Index()
         {
-            List<Job> jobs = context.Jobs.ToList();
-            return View(jobs);
+            List<Employer> employers = context.Employers.ToList();
+
+            return View(employers);
         }
+
 
         public IActionResult Add()
         {
@@ -32,28 +34,31 @@ namespace TechJobsPersistent.Controllers
             return View(addEmployerViewModel);
         }
 
+
         public IActionResult ProcessAddEmployerForm(AddEmployerViewModel addEmployerViewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Employer newEmployer = new Employer
                 {
                     Name = addEmployerViewModel.Name,
                     Location = addEmployerViewModel.Location
-
                 };
                 context.Employers.Add(newEmployer);
                 context.SaveChanges();
-                // need redirect here?
+
+                return Redirect("/Employer");
+
             }
-           
-            return View(addEmployerViewModel);
+
+            return View("Add", addEmployerViewModel);
         }
 
-        public IActionResult About(Employer employer)
+        public IActionResult About(int id)
         {
-            return View();
-            // make sure method is actually passing an employer object to the view for display
+            Employer employer = context.Employers.Find(id);
+
+            return View(employer);
         }
     }
 }
